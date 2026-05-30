@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Control Mod - Панель управления</title>
+    <style>
+        body {
+            background: #0E0F14;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            background: #5865F2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #4752C4;
+        }
+        .panel {
+            background: #1A1D28;
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        input {
+            background: #2A2E3C;
+            border: none;
+            padding: 10px;
+            border-radius: 20px;
+            color: white;
+            width: 80%;
+            margin: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🤖 Control Mod - Панель управления</h1>
+
+    <div id="loginPanel">
+        <button id="loginBtn">🔐 Войти через Discord</button>
+    </div>
+
+    <div id="dashboard" class="hidden">
+        <div class="panel">
+            <h2>🛡️ Защита сервера</h2>
+            <button onclick="sendCommand('lockdown')">🔒 Включить Lockdown</button>
+            <button onclick="sendCommand('unlockdown')">🔓 Выключить Lockdown</button>
+        </div>
+
+        <div class="panel">
+            <h2>👤 Модерация</h2>
+            <input type="text" id="userId" placeholder="ID пользователя">
+            <button onclick="warnUser()">⚠️ Предупреждение</button>
+            <button onclick="muteUser()">🔇 Замутить (1 час)</button>
+            <button onclick="kickUser()">👢 Кикнуть</button>
+            <button onclick="banUser()">🔨 Забанить</button>
+        </div>
+
+        <div class="panel">
+            <h2>💰 Экономика</h2>
+            <input type="text" id="ecoId" placeholder="ID пользователя">
+            <button onclick="addCoins()">➕ +100 монет</button>
+            <button onclick="removeCoins()">➖ -50 монет</button>
+        </div>
+
+        <div class="panel" id="logPanel">
+            <h3>📋 Журнал действий</h3>
+            <div id="logs">Готов к работе</div>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ ЗАМЕНИТЕ ЭТО НА ВАШ CLIENT ID ⚠️
+        const DISCORD_CLIENT_ID = '1509157522076995746';
+        
+        const BOT_API_URL = 'http://localhost:5000/api';
+        let currentUser = null;
+        let selectedGuild = null;
+        
+        function addLog(text) {
+            const logsDiv = document.getElementById('logs');
+            const time = new Date().toLocaleTimeString();
+            logsDiv.innerHTML = `[${time}] ${text}<br>${logsDiv.innerHTML}`;
+        }
+        
+        async function sendCommand(command, args = {}) {
+            if (!selectedGuild) {
+                addLog('❌ Сначала выберите сервер');
+                return;
+            }
+            addLog(`📡 Отправка: ${command}`);
+            try {
+                const response = await fetch(`${BOT_API_URL}/command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command, args, guild_id: selectedGuild })
+                });
+                if (response.ok) addLog(`✅ ${command} - выполнено`);
+                else addLog(`❌ Ошибка`);
+            } catch(e) {
+                addLog(`❌ Бот не запущен`);
+            }
+        }
+        
+        function warnUser() {
+            let uid = document.getElementById('userId').value;
+            if(uid) sendCommand('warn', { user_id: uid });
+            else addLog('❌ Введите ID');
+        }
+        
+        function muteUser() {
+            let uid = document.getElementById('userId').value;
+            if(uid) sendCommand('mute', { user_id: uid });
+            else addLog('❌ Введите ID');
+        }
+        
+        function kickUser() {
+            let uid = document.getElementById('userId').value;
+            if(uid) sendCommand('kick', { user_id: uid });
+            else addLog('❌ Введите ID');
+        }
+        
+        function banUser() {
+            let uid = document.getElementById('userId').value;
+            if(uid) sendCommand('ban', { user_id: uid });
+            else addLog('❌ Введите ID');
+        }
+        
+        function addCoins() {
+            let uid = document.getElementById('ecoId').value;
+            if(uid) sendCommand('add_coins', { user_id: uid, amount: 100 });
+            else addLog('❌ Введите ID');
+        }
+        
+        function removeCoins() {
+            let uid = document.getElementById('ecoId').value;
+            if(uid) sendCommand('remove_coins', { user_id: uid, amount: 50 });
+            else addLog('❌ Введите ID');
+        }
+        
+        // Вход через Discord
+        document.getElementById('loginBtn')?.addEventListener('click', () => {
+            const redirectUri = encodeURIComponent(window.location.href);
+            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=identify%20guilds`;
+            window.location.href = authUrl;
+        });
+        
+        // Обработка возврата из Discord
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const token = params.get('access_token');
+        
+        if (token) {
+            localStorage.setItem('discord_token', token);
+            window.location.hash = '';
+            fetch('https://discord.com/api/users/@me', {
+                headers: { Authorization: `Bearer ${token}` }
+            }).then(res => res.json()).then(user => {
+                currentUser = user;
+                document.getElementById('loginPanel').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                addLog(`✅ Добро пожаловать, ${user.username}!`);
+                
+                // Запрос серверов пользователя
+                fetch('https://discord.com/api/users/@me/guilds', {
+                    headers: { Authorization: `Bearer ${token}` }
+                }).then(res => res.json()).then(guilds => {
+                    const adminGuilds = guilds.filter(g => (g.permissions & 0x8) === 0x8);
+                    if(adminGuilds.length > 0) {
+                        selectedGuild = adminGuilds[0].id;
+                        addLog(`📁 Выбран сервер: ${adminGuilds[0].name}`);
+                    } else {
+                        addLog(`❌ Нет серверов с правами администратора`);
+                    }
+                });
+            });
+        } else {
+            const savedToken = localStorage.getItem('discord_token');
+            if(savedToken) {
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
