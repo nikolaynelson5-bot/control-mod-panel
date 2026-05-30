@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Mod - Панель управления ботом</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0E0F14;
+            color: #EFF3FF;
+            line-height: 1.5;
+        }
+
+        :root {
+            --bg-card: #13151E;
+            --bg-elevated: #1A1D28;
+            --border: #2A2E3C;
+            --accent: #6C7CF0;
+            --accent-hover: #5B6AE0;
+            --danger: #E05A5A;
+            --success: #4BCC7E;
+            --discord: #5865F2;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+
+        /* Навбар */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .logo i {
+            color: var(--accent);
+            font-size: 2rem;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #FFFFFF, #B7C2FF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Кнопка входа */
+        .login-btn {
+            background: var(--discord);
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .login-btn:hover {
+            background: #4752C4;
+            transform: translateY(-2px);
+        }
+
+        /* Профиль пользователя */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-elevated);
+            padding: 6px 16px 6px 12px;
+            border-radius: 60px;
+            border: 1px solid var(--border);
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #A9B4D4;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            color: var(--danger);
+        }
+
+        /* Дашборд */
+        .dashboard {
+            display: flex;
+            gap: 28px;
+            margin: 40px 0 60px;
+            flex-wrap: wrap;
+        }
+
+        .sidebar {
+            flex: 0.9;
+            min-width: 260px;
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: 24px 0;
+            border: 1px solid var(--border);
+            height: fit-content;
+        }
+
+        .sidebar-item {
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #A9B4D4;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item i {
+            width: 24px;
+        }
+
+        .sidebar-item.active {
+            background: rgba(108, 124, 240, 0.12);
+            color: white;
+            border-left-color: var(--accent);
+        }
+
+        .sidebar-item:hover {
+            background: #1E212E;
+            color: white;
+        }
+
+        .main-panel {
+            flex: 3.5;
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: 32px;
+            border: 1px solid var(--border);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .panel-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        /* Карточки */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-elevated);
+            border-radius: 24px;
+            padding: 22px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: #A9B4D4;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        /* Кнопки команд */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .cmd-btn {
+            background: #1E212E;
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cmd-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .danger-btn:hover {
+            background: var(--danger);
+        }
+
+        .success-btn:hover {
+            background: var(--success);
+        }
+
+        /* Поля ввода */
+        input, select {
+            background: #1A1D28;
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            border-radius: 40px;
+            width: 100%;
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Логи */
+        .log-list {
+            background: #0C0D14;
+            border-radius: 20px;
+            padding: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: #A9B4D4;
+            font-family: monospace;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .info-text {
+            color: #A9B4D4;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Селектор сервера */
+        .server-selector {
+            background: var(--bg-elevated);
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 800px) {
+            .dashboard { flex-direction: column; }
+            .main-panel { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-shield-haltered"></i>
+            <span>Control Mod</span>
+        </div>
+        <div class="user-area" id="userArea">
+            <button class="login-btn" id="loginBtn">
+                <i class="fab fa-discord"></i> Войти через Discord
+            </button>
+        </div>
+    </nav>
+
+    <!-- Панель управления (скрыта до авторизации) -->
+    <div id="dashboardContainer" class="dashboard hidden">
+        <div class="sidebar">
+            <div class="sidebar-item active" data-tab="overview">
+                <i class="fas fa-tachometer-alt"></i> Обзор
+            </div>
+            <div class="sidebar-item" data-tab="moderation">
+                <i class="fas fa-gavel"></i> Модерация
+            </div>
+            <div class="sidebar-item" data-tab="protection">
+                <i class="fas fa-shield-alt"></i> Защита
+            </div>
+            <div class="sidebar-item" data-tab="economy">
+                <i class="fas fa-coins"></i> Экономика
+            </div>
+            <div class="sidebar-item" data-tab="tickets">
+                <i class="fas fa-ticket-alt"></i> Тикеты
+            </div>
+            <div class="sidebar-item" data-tab="logs">
+                <i class="fas fa-history"></i> Логи
+            </div>
+        </div>
+
+        <div class="main-panel">
+            <!-- Вкладка Обзор -->
+            <div id="tab-overview" class="tab-content">
+                <div class="panel-header">
+                    <div class="panel-title"><i class="fas fa-chart-line"></i> Панель управления</div>
+                    <div class="server-selector" id="serverSelectorBtn">
+                        <i class="fas fa-server"></i> <span id="selectedServerName">Выберите сервер</span> <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="card-grid">
+                    <div class="stat-card">
+                        <h3><i class="fas fa-users"></i> Участников</h3>
+                        <div class="stat-value" id="statMembers">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-hashtag"></i> Каналов</h3>
+                        <div class="stat-value" id="statChannels">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Предупреждений</h3>
+                        <div class="stat-value" id="statWarns">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-lock"></i> Lockdown</h3>
+                        <div class="stat-value" id="statLockdown">❌ Выкл</div>
+                    </div>
+                </div>
+                <div class="info-text">
+                    <i class="fas fa-info-circle"></i> Вы авторизованы как <strong id="displayUserName"></strong>
+                </div>
+                <div class="button-group">
+                    <div class="cmd-btn" id="quickLockdown"><i class="fas fa-lock"></i> Активировать Lockdown</div>
+                    <div class="cmd-btn" id="quickUnlock"><i class="fas fa-unlock-alt"></i> Снять Lockdown</div>
+                    <div class="cmd-btn" id="syncCommands"><i class="fas fa-sync-alt"></i> Синхронизировать команды</div>
+                </div>
+                <div class="info-text">
+                    <i class="fas fa-plug"></i> API бота: <span id="botStatus">Проверка...</span>
+                </div>
+            </div>
+
+            <!-- Вкладка Модерация -->
+            <div id="tab-moderation" class="tab-content hidden">
+                <div class="panel-header">
+                    <div class="panel-title"><i class="fas fa-gavel"></i> Быстрая модерация</div>
+                </div>
+                <input type="text" id="modUserId" placeholder="ID пользователя">
+                <div class="button-group">
+                    <div class="cmd-btn" id="warnUserBtn"><i class="fas fa-exclamation-triangle"></i> Предупреждение</div>
+                    <div class="cmd-btn" id="muteUserBtn"><i class="fas fa-microphone-slash"></i> Мут (1 час)</div>
+                    <div class="cmd-btn danger-btn" id="kickUserBtn"><i class="fas fa-sign-out-alt"></i> Кикнуть</div>
+                    <div class="cmd-btn danger-btn" id="banUserBtn"><i class="fas fa-ban"></i> Забанить</div>
+                    <div class="cmd-btn" id="clearChatBtn"><i class="fas fa-trash-alt"></i> Очистить чат (50)</div>
+                </div>
+                <div class="info-text">
+                    <i class="fas fa-question-circle"></i> Чтобы получить ID пользователя: Настройки Discord → Режим разработчика → ПКМ по пользователю → Копировать ID
+                </div>
+            </div>
+
+            <!-- Вкладка Защита -->
+            <div id="tab-protection" class="tab-content hidden">
+                <div class="panel-header">
+                    <div class="panel-title"><i class="fas fa-shield-alt"></i> Настройки защиты</div>
+                </div>
+                <div class="button-group">
+                    <div class="cmd-btn" id="toggleRaidMode"><i class="fas fa-users-slash"></i> Анти-рейд режим</div>
+                    <div class="cmd-btn" id="toggleAntiSpam"><i class="fas fa-comment-slash"></i> Анти-спам</div>
+                    <div class="cmd-btn" id="setSlowmode"><i class="fas fa-clock"></i> Slowmode 5 сек</div>
+                </div>
+                <div class="log-list" id="protectionLogs">
+                    <div class="log-item"><span class="log-time">●</span> Система защиты активна</div>
+                </div>
+            </div>
+
+            <!-- Вкладка Экономика -->
+            <div id="tab-economy" class="tab-content hidden">
+                <div class="panel-header">
+                    <div class="panel-title"><i class="fas fa-coins"></i> Управление валютой</div>
+                </div>
+                <input type="text" id="ecoUserId" placeholder="ID пользователя">
+                <div class="button-group">
+                    <div class="cmd-btn success-btn" id="addCoinsBtn"><i class="fas fa-plus-circle"></i> +100 Coins</div>
+                    <div class="cmd-btn danger-btn" id="removeCoinsBtn"><i class="fas fa-minus-circle"></i> -50 Coins</div>
+                    <div class="cmd-btn" id="checkBalanceBtn"><i class="fas fa-wallet"></i> Проверить баланс</div>
+                </div>
+                <div class="info-text">
+                    <i class="fas fa-chart-simple"></i> Команды для всех: <code>/balance</code>, <code>/leaders</code>, <code>/pay</code>
+                </div>
+            </div>
+
+            <!-- Вкладка Тикеты -->
+            <div id="tab-tickets" class="tab-content hidden">
+                <div class="panel-header">
+                    <div class="panel-title"><i class="fas fa-ticket-alt"></i> Система поддержки</div>
+                </div>
+                <div class="button-group">
+                    <div class="cmd-btn" id="createSupportPanel"><i class="fas fa-plus-circle"></i> Создать панель поддержки</div>
+                    <div class="cmd-btn" id="ticketStatsBtn"><i class="fas fa-chart-pie"></i> Статистика тикетов</div>
+                </div>
+                <div class="info-text">
+                    <i class="fas fa-info-circle"></i> Панель создаст embed с кнопками в текущем канале
+                </div>
+            </div>
+
+            <!-- Вкладка Логи -->
+            <div id="tab-logs" class="tab-content hidden">
+                <div class="panel-header">
+                    <div class="panel-title"><i class="fas fa-history"></i> Журнал действий</div>
+                </div>
+                <div class="log-list" id="actionLogs">
+                    <div class="log-item">Авторизуйтесь для начала работы</div>
+                </div>
+                <div class="cmd-btn" id="clearLogsBtn" style="margin-top: 16px;"><i class="fas fa-eraser"></i> Очистить логи</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Конфигурация
+    const BOT_API_URL = 'http://localhost:5000/api';  // Замените на адрес вашего бота
+    let currentUser = null;
+    let selectedGuild = null;
+    let userServers = [];
+    let sessionLogs = [];
+
+    // Discord OAuth2
+    const DISCORD_CLIENT_ID = '1509157522076995746';  // ЗАМЕНИТЕ НА ID ВАШЕГО БОТА
+    const REDIRECT_URI = encodeURIComponent(window.location.href);
+    const DISCORD_AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify%20guilds`;
+
+    // Функции
+    function addLog(message, type = 'info') {
+        const time = new Date().toLocaleTimeString();
+        const logEntry = `[${time}] ${message}`;
+        sessionLogs.unshift(logEntry);
+        const logsDiv = document.getElementById('actionLogs');
+        if (logsDiv) {
+            logsDiv.innerHTML = sessionLogs.slice(0, 30).map(l => `<div class="log-item">${l}</div>`).join('');
+        }
+    }
+
+    async function sendBotCommand(command, args = {}) {
+        if (!selectedGuild) {
+            addLog('❌ Выберите сервер');
+            return false;
+        }
+        
+        addLog(`📡 Отправка: ${command}`);
+        
+        try {
+            const response = await fetch(`${BOT_API_URL}/command`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    command: command,
+                    args: args,
+                    user_id: currentUser?.id,
+                    guild_id: selectedGuild.id
+                })
+            });
+            
+            if (response.ok) {
+                addLog(`✅ ${command} - выполнено`);
+                if (command === 'lockdown') {
+                    document.getElementById('statLockdown').innerHTML = '⚠️ АКТИВЕН';
+                } else if (command === 'unlockdown') {
+                    document.getElementById('statLockdown').innerHTML = '❌ Выкл';
+                }
+                return true;
+            } else {
+                addLog(`❌ Ошибка: ${response.status}`);
+                return false;
+            }
+        } catch (error) {
+            addLog(`❌ Ошибка соединения с ботом: ${error.message}`);
+            return false;
+        }
+    }
+
+    // Discord OAuth2 авторизация
+    function handleDiscordAuth() {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const token = params.get('access_token');
+        
+        if (token) {
+            localStorage.setItem('discord_token', token);
+            window.history.pushState({}, document.title, window.location.pathname);
+            fetchUserData(token);
+        } else {
+            const savedToken = localStorage.getItem('discord_token');
+            if (savedToken) {
+                fetchUserData(savedToken);
+            }
+        }
+    }
+
+    async function fetchUserData(token) {
+        try {
+            const userRes = await fetch('https://discord.com/api/users/@me', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const userData = await userRes.json();
+            
+            const guildsRes = await fetch('https://discord.com/api/users/@me/guilds', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const guildsData = await guildsRes.json();
+            
+            currentUser = {
+                id: userData.id,
+                username: userData.username,
+                discriminator: userData.discriminator,
+                avatar: userData.avatar ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png'
+            };
+            
+            userServers = guildsData.filter(g => (g.permissions & 0x8) === 0x8);
+            
+            updateUIAfterLogin();
+            addLog(`✅ Авторизован как ${currentUser.username}`);
+            
+        } catch (error) {
+            addLog(`❌ Ошибка авторизации: ${error.message}`);
+        }
+    }
+
+    function updateUIAfterLogin() {
+        document.getElementById('userArea').innerHTML = `
+            <div class="user-profile">
+                <img class="user-avatar" src="${currentUser.avatar}" alt="avatar">
+                <span class="user-name">${currentUser.username}</span>
+                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        `;
+        
+        document.getElementById('displayUserName').innerText = currentUser.username;
+        document.getElementById('dashboardContainer').classList.remove('hidden');
+        
+        // Заполнить список серверов
+        if (userServers.length > 0) {
+            selectedGuild = userServers[0];
+            document.getElementById('selectedServerName').innerText = selectedGuild.name;
+            updateServerStats();
+        }
+        
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+            localStorage.removeItem('discord_token');
+            location.reload();
+        });
+        
+        document.getElementById('botStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#4BCC7E"></i> Подключен';
+    }
+
+    async function updateServerStats() {
+        if (selectedGuild) {
+            document.getElementById('statMembers').innerText = selectedGuild.approximate_member_count || '—';
+            document.getElementById('statChannels').innerText = '?';
+        }
+    }
+
+    function showServerSelector() {
+        const options = userServers.map(s => `${s.name} (${s.id})`).join('\n');
+        const newId = prompt('Выберите сервер, введите ID:\n' + options);
+        if (newId) {
+            const server = userServers.find(s => s.id === newId || s.id === newId.split('(').pop().replace(')', ''));
+            if (server) {
+                selectedGuild = server;
+                document.getElementById('selectedServerName').innerText = server.name;
+                updateServerStats();
+                addLog(`📁 Выбран сервер: ${server.name}`);
+            }
+        }
+    }
+
+    // Обработчики
+    document.getElementById('loginBtn')?.addEventListener('click', () => {
+        window.location.href = DISCORD_AUTH_URL;
+    });
+    
+    document.getElementById('serverSelectorBtn')?.addEventListener('click', showServerSelector);
+    
+    // Кнопки панели
+    document.getElementById('quickLockdown')?.addEventListener('click', () => sendBotCommand('lockdown'));
+    document.getElementById('quickUnlock')?.addEventListener('click', () => sendBotCommand('unlockdown'));
+    document.getElementById('syncCommands')?.addEventListener('click', () => sendBotCommand('sync_commands'));
+    
+    document.getElementById('warnUserBtn')?.addEventListener('click', () => {
+        const uid = document.getElementById('modUserId').value;
+        if (uid) sendBotCommand('warn', { user_id: uid, reason: 'Нарушение через панель' });
+        else addLog('❌ Введите ID пользователя');
+    });
+    
+    document.getElementById('muteUserBtn')?.addEventListener('click', () => {
+        const uid = document.getElementById('modUserId').value;
+        if (uid) sendBotCommand('mute', { user_id: uid, duration: 3600 });
+        else addLog('❌ Введите ID пользователя');
+    });
+    
+    document.getElementById('kickUserBtn')?.addEventListener('click', () => {
+        const uid = document.getElementById('modUserId').value;
+        if (uid) sendBotCommand('kick', { user_id: uid });
+        else addLog('❌ Введите ID пользователя');
+    });
+    
+    document.getElementById('banUserBtn')?.addEventListener('click', () => {
+        const uid = document.getElementById('modUserId').value;
+        if (uid) sendBotCommand('ban', { user_id: uid });
+        else addLog('❌ Введите ID пользователя');
+    });
+    
+    document.getElementById('clearChatBtn')?.addEventListener('click', () => {
+        sendBotCommand('clear', { amount: 50 });
+    });
+    
+    document.getElementById('addCoinsBtn')?.addEventListener('click', () => {
+        const uid = document.getElementById('ecoUserId').value;
+        if (uid) sendBotCommand('add_coins', { user_id: uid, amount: 100 });
+        else addLog('❌ Введите ID пользователя');
+    });
+    
+    document.getElementById('removeCoinsBtn')?.addEventListener('click', () => {
+        const uid = document.getElementById('ecoUserId').value;
+        if (uid) sendBotCommand('remove_coins', { user_id: uid, amount: 50 });
+        else addLog('❌ Введите ID пользователя');
+    });
+    
+    document.getElementById('createSupportPanel')?.addEventListener('click', () => {
+        sendBotCommand('setup_support', { channel_id: 'current' });
+    });
+    
+    document.getElementById('clearLogsBtn')?.addEventListener('click', () => {
+        sessionLogs = [];
+        document.getElementById('actionLogs').innerHTML = '<div class="log-item">Логи очищены</div>';
+    });
+    
+    // Переключение вкладок
+    const tabs = document.querySelectorAll('.sidebar-item');
+    const contents = {
+        overview: document.getElementById('tab-overview'),
+        moderation: document.getElementById('tab-moderation'),
+        protection: document.getElementById('tab-protection'),
+        economy: document.getElementById('tab-economy'),
+        tickets: document.getElementById('tab-tickets'),
+        logs: document.getElementById('tab-logs')
+    };
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.getAttribute('data-tab');
+            Object.values(contents).forEach(c => c?.classList.add('hidden'));
+            if (contents[tabName]) contents[tabName].classList.remove('hidden');
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+    
+    // Запуск
+    handleDiscordAuth();
+</script>
+</body>
+</html>
