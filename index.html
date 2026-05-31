@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -15,26 +15,26 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #0a0c12;
+            background: #07090f;
             color: #eef2ff;
             line-height: 1.5;
         }
 
         :root {
-            --bg-darker: #06070c;
-            --bg-card: #10121c;
-            --bg-elevated: #161a28;
-            --border: #252a3a;
-            --accent: #6c7cf0;
-            --accent-glow: rgba(108,124,240,0.3);
-            --accent-hover: #5b6ae0;
-            --danger: #f05a5a;
-            --danger-hover: #d94747;
-            --success: #4bcc7e;
-            --warning: #f0b34b;
-            --discord: #5865f2;
+            --bg-darker: #030408;
+            --bg-card: #0c0f17;
+            --bg-elevated: #121624;
+            --border: #202433;
+            --accent: #7c8cf5;
+            --accent-glow: rgba(124,140,245,0.25);
+            --accent-hover: #6b7be8;
+            --danger: #f06a6a;
+            --danger-hover: #e05555;
+            --success: #5fd48c;
+            --warning: #f5bc5a;
+            --discord: #5c6ef0;
             --text-main: #f0f3fa;
-            --text-dim: #a2abcf;
+            --text-dim: #9aa5cf;
         }
 
         .container {
@@ -85,10 +85,11 @@
             align-items: center;
             gap: 10px;
             transition: 0.2s;
+            box-shadow: 0 2px 8px rgba(92,110,240,0.2);
         }
 
         .login-btn:hover {
-            background: #4752c4;
+            background: #4a5ad8;
             transform: translateY(-2px);
         }
 
@@ -111,7 +112,7 @@
 
         .server-selector {
             background: var(--bg-elevated);
-            padding: 8px 20px;
+            padding: 10px 24px;
             border-radius: 40px;
             border: 1px solid var(--border);
             cursor: pointer;
@@ -124,6 +125,7 @@
 
         .server-selector:hover {
             border-color: var(--accent);
+            background: var(--bg-card);
         }
 
         .logout-btn {
@@ -166,7 +168,7 @@
         }
 
         .badge {
-            background: #1e212e;
+            background: #12141f;
             padding: 6px 18px;
             border-radius: 40px;
             font-size: 0.8rem;
@@ -203,7 +205,7 @@
         }
 
         .sidebar-item.active {
-            background: rgba(108, 124, 240, 0.12);
+            background: rgba(124, 140, 245, 0.12);
             color: white;
             border-left-color: var(--accent);
         }
@@ -254,7 +256,7 @@
         }
 
         .cmd-btn {
-            background: #1e212e;
+            background: #1a1d2b;
             border: 1px solid var(--border);
             padding: 12px 24px;
             border-radius: 40px;
@@ -277,7 +279,7 @@
         }
 
         input, select, textarea {
-            background: #12141f;
+            background: #11131f;
             border: 1px solid var(--border);
             padding: 12px 16px;
             border-radius: 32px;
@@ -293,7 +295,7 @@
         }
 
         .log-list {
-            background: #0c0e16;
+            background: #0a0c14;
             border-radius: 20px;
             padding: 16px;
             max-height: 380px;
