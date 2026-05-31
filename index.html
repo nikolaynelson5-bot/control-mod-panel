@@ -338,7 +338,6 @@
         </div>
     </nav>
 
-    <!-- ПРИВЕТСТВЕННАЯ СТРАНИЦА -->
     <div id="welcomePage">
         <div class="hero">
             <h1>Управляй сервером с комфортом</h1>
@@ -353,7 +352,6 @@
         </div>
     </div>
 
-    <!-- ОСНОВНАЯ ПАНЕЛЬ -->
     <div id="dashboardApp" class="dashboard hidden">
         <div class="sidebar">
             <div class="sidebar-item active" data-tab="overview"><i class="fas fa-tachometer-alt"></i> Обзор</div>
@@ -364,7 +362,6 @@
             <div class="sidebar-item" data-tab="economy"><i class="fas fa-coins"></i> Экономика</div>
         </div>
         <div class="main-panel" id="mainPanel">
-            <!-- Вкладка ОБЗОР -->
             <div id="tab-overview" class="tab-content">
                 <div class="panel-header">
                     <div class="server-selector" id="serverSelectorBtn"><i class="fas fa-server"></i> <span id="selectedServerName">Выберите сервер</span></div>
@@ -381,7 +378,6 @@
                 <div class="info-text"><i class="fas fa-info-circle"></i> Для работы всех команд выберите сервер и укажите ID пользователя.</div>
             </div>
 
-            <!-- Вкладка МОДЕРАЦИЯ (полный набор) -->
             <div id="tab-moderation" class="tab-content hidden">
                 <div class="panel-header"><h3><i class="fas fa-gavel"></i> Все инструменты модерации</h3></div>
                 <input type="text" id="modUserId" placeholder="ID пользователя (обязательно)">
@@ -398,7 +394,6 @@
                 <div class="info-text">🔹 <strong>Как получить ID пользователя?</strong> Включите в Discord режим разработчика → ПКМ по участнику → Копировать ID.</div>
             </div>
 
-            <!-- Вкладка ЛОГИРОВАНИЕ (полная лента событий) -->
             <div id="tab-logs" class="tab-content hidden">
                 <div class="panel-header"><h3><i class="fas fa-scroll"></i> Логи действий (в реальном времени)</h3></div>
                 <div class="log-list" id="logsContainer">
@@ -410,7 +405,6 @@
                 </div>
             </div>
 
-            <!-- Вкладка /MSG с цветом, заголовком, телом -->
             <div id="tab-msgpanel" class="tab-content hidden">
                 <div class="panel-header"><h3><i class="fas fa-paper-plane"></i> Управление рассылкой /msg</h3></div>
                 <input type="text" id="msgChannel" placeholder="ID канала или #канал">
@@ -428,7 +422,6 @@
                 <div class="info-text">Поддерживается markdown, упоминания ролей и пользователей. Цвет полоски отображается в embed.</div>
             </div>
 
-            <!-- Вкладка ЗАЩИТА -->
             <div id="tab-protection" class="tab-content hidden">
                 <div class="panel-header"><h3><i class="fas fa-shield-alt"></i> Анти-спам и рейд защита</h3></div>
                 <div class="button-group">
@@ -438,7 +431,6 @@
                 <div class="log-list" id="protectLogs"><div class="log-item">⚙️ Защита активна. Lockdown выключен.</div></div>
             </div>
 
-            <!-- Вкладка ЭКОНОМИКА -->
             <div id="tab-economy" class="tab-content hidden">
                 <div class="panel-header"><h3><i class="fas fa-coins"></i> Coins система</h3></div>
                 <input type="text" id="ecoUserId" placeholder="ID пользователя">
@@ -453,18 +445,15 @@
 </div>
 
 <script>
-    // ====================== НАСТРОЙКИ ======================
-    const CLIENT_ID = '1509157522076995746';          // ЗАМЕНИТЕ НА ВАШ CLIENT ID
+    const CLIENT_ID = '1509157522076995746';
     const REDIRECT_URI = encodeURIComponent(window.location.href);
-    const API_URL = 'http://localhost:5000/api';      // Адрес вашего API-сервера бота
+    const API_URL = 'http://localhost:5000/api';
 
-    // ====================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ======================
     let currentUser = null;
     let selectedGuild = null;
     let guildsList = [];
     let sessionLogs = [];
 
-    // ====================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ======================
     function addLog(message, isError = false) {
         const logsDiv = document.getElementById('logsContainer');
         if (!logsDiv) return;
@@ -473,7 +462,6 @@
         const formatted = `[${time}] ${prefix} ${message}`;
         sessionLogs.unshift(formatted);
         logsDiv.innerHTML = sessionLogs.slice(0, 80).map(l => `<div class="log-item">${l}</div>`).join('');
-        // также дублируем в лог защиты, если сообщение касается рейда/lockdown
         if (message.toLowerCase().includes('lockdown') || message.toLowerCase().includes('рейд')) {
             const protDiv = document.getElementById('protectLogs');
             if (protDiv) protDiv.innerHTML = `<div class="log-item">[${time}] ${message}</div>` + protDiv.innerHTML;
@@ -513,7 +501,6 @@
         }
     }
 
-    // ====================== DISCORD OAuth2 (выбор аккаунта и серверов) ======================
     function handleAuth() {
         const hash = window.location.hash.substring(1);
         const params = new URLSearchParams(hash);
@@ -544,11 +531,9 @@
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const allGuilds = await guildsRes.json();
-                guildsList = allGuilds.filter(g => (g.permissions & 0x8) === 0x8); // только серверы с админ правами
-                // скрываем приветствие, показываем панель
+                guildsList = allGuilds.filter(g => (g.permissions & 0x8) === 0x8);
                 document.getElementById('welcomePage').classList.add('hidden');
                 document.getElementById('dashboardApp').classList.remove('hidden');
-                // обновляем юзер-меню
                 document.getElementById('userArea').innerHTML = `
                     <div class="user-profile">
                         <img class="user-avatar" src="${currentUser.avatar}" alt="avatar">
@@ -574,13 +559,11 @@
         }
     }
 
-    // кнопка входа
     document.getElementById('loginBtn')?.addEventListener('click', () => {
         const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify%20guilds`;
         window.location.href = authUrl;
     });
 
-    // выбор сервера (динамический)
     document.getElementById('serverSelectorBtn')?.addEventListener('click', () => {
         if (!guildsList.length) {
             addLog('Нет доступных серверов (нужны права администратора)', true);
@@ -599,11 +582,8 @@
         }
     });
 
-    // ====================== ОБРАБОТЧИКИ КНОПОК ======================
-    // обзор
     document.getElementById('lockdownBtn')?.addEventListener('click', () => callBotCommand('lockdown'));
     document.getElementById('unlockdownBtn')?.addEventListener('click', () => callBotCommand('unlockdown'));
-    // модерация
     document.getElementById('warnBtn')?.addEventListener('click', () => {
         const uid = document.getElementById('modUserId').value.trim();
         const reason = document.getElementById('modReason').value.trim() || 'Нарушение правил';
@@ -632,7 +612,6 @@
     });
     document.getElementById('clearChatBtn')?.addEventListener('click', () => callBotCommand('clear', { amount: 50 }));
     document.getElementById('slowmodeBtn')?.addEventListener('click', () => callBotCommand('slowmode', { seconds: 5 }));
-    // экономика
     document.getElementById('addCoinsBtn')?.addEventListener('click', () => {
         const uid = document.getElementById('ecoUserId').value.trim();
         if (!uid) { addLog('Введите ID пользователя', true); return; }
@@ -648,11 +627,9 @@
         if (!uid) { addLog('Введите ID', true); return; }
         callBotCommand('balance', { user_id: uid });
     });
-    // защита
     document.getElementById('antispamToggle')?.addEventListener('click', () => callBotCommand('antispam_toggle'));
     document.getElementById('raidModeBtn')?.addEventListener('click', () => callBotCommand('lockdown', { reason: 'рейд-режим активирован' }));
 
-    // ====================== /MSG панель с цветом ======================
     const colorPicker = document.getElementById('msgColor');
     const previewSpan = document.getElementById('colorPreview');
     colorPicker?.addEventListener('input', (e) => { if(previewSpan) previewSpan.style.background = e.target.value; });
@@ -669,7 +646,6 @@
         callBotCommand('msg', { channel_id: channel, title, content, color, role_id: roleId });
     });
 
-    // ====================== ЛОГИ: ОЧИСТКА И ЭКСПОРТ ======================
     document.getElementById('clearLogsBtn')?.addEventListener('click', () => {
         sessionLogs = [];
         document.getElementById('logsContainer').innerHTML = '<div class="log-item">🗑️ Логи очищены</div>';
@@ -686,7 +662,6 @@
         addLog('📁 Логи экспортированы в JSON');
     });
 
-    // ====================== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ======================
     const tabs = document.querySelectorAll('.sidebar-item');
     const contents = {
         overview: document.getElementById('tab-overview'),
@@ -706,7 +681,6 @@
         });
     });
 
-    // ====================== ЗАПУСК ======================
     handleAuth();
 </script>
 </body>
