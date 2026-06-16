@@ -1,0 +1,8 @@
+{
+    "ticket_counter": 0,
+    "complaint_counter": 0,
+    "tickets": {},
+    "complaints": {},
+    "archived_tickets": {},
+    "archived_complaints": {}
+}
